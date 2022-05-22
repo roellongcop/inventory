@@ -249,25 +249,28 @@ class ItemController extends Controller
     public function actionSaveSale()
     {
         $postData = Yii::$app->request->post();
-        $orders = $postData['orders'];
-        $total = $postData['total'];
-        $customer_id = $postData['customer_id'];
-        $invoice = $postData['invoice'];
+        $orders = $postData['orders'] ?? '';
+        $total = $postData['total'] ?? 0;
+        $customer_id = $postData['customer_id'] ?? '';
+        $invoice = $postData['invoice'] ?? '';
 
         $records = '';
         
-        foreach ($orders as $order) {
-            $item = $this->findModel($order['id']);
-            $item->quantity = $item->quantity - $order['order_quantity'];
-            $item->save();
+        if ($orders) {
+            // code...
+            foreach ($orders as $order) {
+                $item = $this->findModel($order['id']);
+                $item->quantity = $item->quantity - $order['order_quantity'];
+                $item->save();
 
-            $mp = new MovingProduct();
-            $mp->item_name = $order['name'];
-            $mp->quantity = $order['order_quantity'];
-            $mp->date = date('Y-m-d');
-            $mp->save();
+                $mp = new MovingProduct();
+                $mp->item_name = $order['name'];
+                $mp->quantity = $order['order_quantity'];
+                $mp->date = date('Y-m-d');
+                $mp->save();
 
-            $records .= '('. $order['order_quantity'] .') ' . $order['name'] . ' = PHP ' . number_format($order['price'], 2) . '<br>';
+                $records .= '('. $order['order_quantity'] .') ' . $order['name'] . ' = PHP ' . number_format($order['price'], 2) . '<br>';
+            }
         }
 
         $records .= '<b>Total</b> : PHP ' . number_format($total, 2);

@@ -38,7 +38,9 @@ class Template extends \yii\base\Component
 
 	public function getSales($date)
 	{
-		return number_format(Sale::getSales($date), 2);
+		$model = new Sale();
+
+		return number_format($model->getSales($date), 2);
 	}
 	
 
